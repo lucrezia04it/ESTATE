@@ -1,0 +1,6 @@
+id,name
+property_type_casa,Casa
+property_type_appartamento,Appartamento
+property_type_villa,Villa
+property_type_monolocale,Monolocale
+property_type_residenziale,Residenziale
