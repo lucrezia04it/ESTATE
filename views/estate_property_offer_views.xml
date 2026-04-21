@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="estate_property_offer_view_search" model="ir.ui.view">
+        <field name="name">estate.property.offer.search</field>
+        <field name="model">estate.property.offer</field>
+        <field name="arch" type="xml">
+            <search string="Search Offers">
+                <field name="property_id"/>
+                <field name="partner_id"/>
+                <field name="property_type_id"/> </search>
+        </field>
+    </record>
+
     <record id="estate_property_offer_list_view" model="ir.ui.view">
         <field name="name">estate.property.offer.list</field>
         <field name="model">estate.property.offer</field>
         <field name="arch" type="xml">
-            <list string="Offers">
+            <list string="Offers" editable="bottom" decoration-danger="status == 'refused'" decoration-success="status == 'accepted'">
                 <field name="price"/>
                 <field name="partner_id"/>
+                <field name="property_id"/> <field name="property_type_id" optional="hide"/>
                 <field name="validity"/>
                 <field name="date_deadline"/>
+                <button name="action_accept" type="object" icon="fa-check" title="Accept" invisible="status"/>
+                <button name="action_refuse" type="object" icon="fa-times" title="Refuse" invisible="status"/>
                 <field name="status"/>
             </list>
         </field>
@@ -19,13 +33,16 @@
         <field name="model">estate.property.offer</field>
         <field name="arch" type="xml">
             <form string="Offer">
-                <group>
-                    <field name="price"/>
-                    <field name="partner_id"/>
-                    <field name="validity"/>
-                    <field name="date_deadline"/>
-                    <field name="status"/>
-                </group>
+                <sheet>
+                    <group>
+                        <field name="property_id"/>
+                        <field name="partner_id"/>
+                        <field name="price"/>
+                        <field name="validity"/>
+                        <field name="date_deadline"/>
+                        <field name="status" readonly="1"/>
+                    </group>
+                </sheet>
             </form>
         </field>
     </record>
@@ -34,5 +51,6 @@
         <field name="name">Offers</field>
         <field name="res_model">estate.property.offer</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="estate_property_offer_view_search"/>
     </record>
 </odoo>

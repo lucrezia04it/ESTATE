@@ -51,6 +51,11 @@ class EstatePropertyOffer(models.Model):
 
     def action_accept(self):
         for record in self:
+            # Controllo: esiste già un'offerta accettata per questa proprietà?
+            # Cerchiamo tra tutte le offerte della proprietà se ce n'è una con status 'accepted'
+            if record.property_id.offer_ids.filtered(lambda o: o.status == 'accepted'):
+                raise UserError("Questa proprietà ha già un'offerta accettata! Rifiuta quella esistente prima di procedere.")
+                
             record.status = "accepted"
             record.property_id.buyer_id = record.partner_id
             record.property_id.selling_price = record.price
