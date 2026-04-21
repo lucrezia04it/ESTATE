@@ -77,6 +77,16 @@
                     <widget name="web_ribbon" title="Venduto" bg_color="text-bg-success" invisible="state != 'venduto'"/>
                     <widget name="web_ribbon" title="Annullato" bg_color="text-bg-danger" invisible="state != 'cancellato'"/>
 
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoice" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-pencil-square-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count" widget="statinfo" string="Fatture"/>
+                        </button>
+                    </div>
+
                     <div class="oe_title">
                         <h1>
                             <field name="name" placeholder="Es. Villa Splendida"/>

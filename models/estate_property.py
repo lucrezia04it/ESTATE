@@ -50,6 +50,7 @@ class EstateProperty(models.Model):
         default='new',
     )
     image = fields.Image("Foto principale", max_width=1024, max_height=1024)
+    invoice_count = fields.Integer(compute="_compute_invoice_count")
 
     _sql_constraints = [
         ('check_expected_price', 'CHECK(expected_price > 0)', 'il prezzo deve essere maggiore di 0'),
@@ -75,14 +76,6 @@ class EstateProperty(models.Model):
             self.garden_area = 0
             self.garden_orientation = False
     
-    def action_sold(self):
-        for record in self:
-            if record.state == "cancellato":
-                raise UserError("Una proprietà cancellata non può essere venduta.")
-        
-            record.state = "venduto"
-        return True
-
     def action_cancelled(self):
         for record in self:
             if record.state == "venduto":
@@ -105,3 +98,29 @@ class EstateProperty(models.Model):
         for record in self:
             if record.state not in ('new', 'cancelled'):
                 raise UserError("Non puoi eliminare una proprietà venduta")
+    
+    def action_sold(self):
+        for record in self:
+            if record.state == "cancelled":
+                raise UserError("Una proprietà cancellata non può essere venduta.")
+        
+            record.state = "venduto"
+        return True
+
+    def _compute_invoice_count(self):
+        for record in self:
+            record.invoice_count = self.env['account.move'].search_count([
+                ('ref', '=', record.name),
+                ('move_type', '=', 'out_invoice')
+            ])
+
+    def action_view_invoice(self):
+        self.ensure_one()
+        return {
+            'name': 'Fatture Provvigione',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'view_mode': 'list,form',
+            'domain': [('ref', '=', self.name)],
+            'context': {'create': False},
+        }
